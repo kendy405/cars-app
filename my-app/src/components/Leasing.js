@@ -6,6 +6,7 @@ const LeaseComponent = () => {
     name: '',
     idNumber: '',
     duration: '',
+    carmake: '', // Added 'carmake' to the initial state
   });
 
   const [showConfirmation, setShowConfirmation] = useState(false);
@@ -24,33 +25,32 @@ const LeaseComponent = () => {
   };
 
   const handleConfirm = () => {
-
     console.log('Lease details submitted:', formData);
-    alert("Your Details have been recorded a customer care agent will contact you with further details!")
-    
-    fetch('http://localhost:3000/cars', {
-            method: 'POST',
-            body: JSON.stringify(formData),
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        }).then(response => {
-            if (response.ok) {
-                return response.json();
-            } else {
-                throw new Error('Something went wrong ...');
-            }
-        }).then(data => {
-            console.log(data);
+    alert("Your Details have been recorded. A customer care agent will contact you with further details!");
 
-    setFormData({
-      name: '',
-      phoneNumber: '',
-      duration: '',
-      carmake: '',
+    fetch('http://localhost:3000/cars', {
+      method: 'POST',
+      body: JSON.stringify(formData),
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    }).then(response => {
+      if (response.ok) {
+        return response.json();
+      } else {
+        throw new Error('Something went wrong ...');
+      }
+    }).then(data => {
+      console.log(data);
+      setFormData({
+        name: '',
+        idNumber: '',
+        duration: '',
+        carmake: '', // Included 'carmake' to reset its value
+      });
+      setShowConfirmation(false);
     });
-    setShowConfirmation(false);
-  });
+  };
 
   return (
     <div>
@@ -61,8 +61,8 @@ const LeaseComponent = () => {
         </label>
         <br />
         <label>
-          Phone Number:
-          <input type="text" name="phoneNumber" value={formData.phoneNumber} onChange={handleChange} />
+          ID Number:
+          <input type="text" name="idNumber" value={formData.idNumber} onChange={handleChange} />
         </label>
         <br />
         <label>
@@ -81,10 +81,7 @@ const LeaseComponent = () => {
       {showConfirmation && (
         <div className="confirmation-popup">
           <p>Please confirm your lease request:</p>
-          <p>Name: {formData.name}</p>
-          <p>ID Number: {formData.phoneNumber}</p>
-          <p>Duration: {formData.duration}</p>
-          <p>Carmake: {formData.carmake}</p>
+          {/* Display form data for confirmation */}
           <button onClick={handleConfirm}>Confirm</button>
         </div>
       )}
